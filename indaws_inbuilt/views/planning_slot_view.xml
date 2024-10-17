@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="planning_view_form_inherit" model="ir.ui.view">
+            <field name="name">planning.view.form.inherit</field>
+            <field name="model">planning.slot</field>
+            <field name="inherit_id" ref="planning.planning_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[1]/field[@name='project_id'][2]" position="after">
+                    <field name="parte_id" string="Tarea" context="{'default_project_id': project_id}" domain="[('project_id', '=', project_id)]"/>
+                </xpath>
+                <xpath expr="//form[1]/sheet[1]/group[1]/group[@name='slot_info_right']/div[2]" position="after">
+                    <field name="deadline" />
+                    <field name="planned_hours" widget="timesheet_uom_no_toggle"/>
+                    <field name="planned_hours_task" widget="timesheet_uom_no_toggle"/>
+                    <field name="hours_left" widget="timesheet_uom_no_toggle"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="planning_slot_view_gantt_inherit_hours" model="ir.ui.view">
+            <field name="name">planning.slot.gantt.inherit.hours</field>
+            <field name="model">planning.slot</field>
+            <field name="inherit_id" ref="planning.planning_view_gantt"/>
+            <field name="arch" type="xml">
+                <xpath expr="//gantt" position="inside">
+                    <field name="name_task" />
+                    <field name="deadline" />
+                    <field name="planned_hours" widget="timesheet_uom_no_toggle"/>
+                    <field name="planned_hours_task" widget="timesheet_uom_no_toggle"/>
+                    <field name="hours_left" widget="timesheet_uom_no_toggle"/>
+                    <field name="hours_left_text"/>
+                    <field name="planned_hours_task_text"/>
+                    <field name="planned_hours_text"/>
+                </xpath>
+                <xpath expr="//gantt/templates//div[@t-name='gantt-popover']" position="inside">
+                    <div id="name_task"><strong>Tarea — </strong> <t t-esc="name_task" /> </div>
+                    <div id="deadline"><strong>Fecha Limite — </strong> <t t-esc="deadline and deadline.format('YYYY-MM-DD') or ''" /> </div>
+                    <div id="planned_hours_task_text"><strong>Horas planificadas— </strong> <t t-esc="planned_hours_task_text"/> </div>
+                    <div id="planned_hours_text"><strong>Horas previstas — </strong> <t t-esc="planned_hours_text" /> </div>
+                    <div id="hours_left_text"><strong>Horas restantes — </strong> <t t-esc="hours_left_text" /> </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

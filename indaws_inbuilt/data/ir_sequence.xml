@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="increment_sale_capitulo" model="ir.sequence">
+            <field name="name">Sale Capituolo Incrementation</field>
+            <field name="code">increment_sale_capitule</field>
+            <field name="number_next_actual">1</field>
+        </record>
+    </data>
+</odoo>

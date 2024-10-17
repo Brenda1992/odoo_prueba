@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_advance_payment_inv" model="ir.ui.view">
+        <field name="name">Invoice Tasks</field>
+        <field name="model">task.advance.payment.inv</field>
+        <field name="arch" type="xml">
+            <form string="Invoice Project Task">
+                <p class="oe_grey">
+                    Invoices will be created in draft so that you can review
+                    them before validation.
+                </p>
+                <footer>
+                    <button name="create_invoices" id="create_invoice_open" string="Create and View Invoice" type="object" context="{'open_invoices': True}" class="btn-primary" data-hotkey="q" />
+                    <button name="create_invoices" id="create_invoice" string="Create Invoice" type="object" data-hotkey="w" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_task_advance_payment_inv" model="ir.actions.act_window">
+        <field name="name">Facturar tareas</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">task.advance.payment.inv</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="project.model_project_task" />
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

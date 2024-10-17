@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="project_production_task_wizard_views" model="ir.ui.view">
+            <field name="name">project.production.task.wizard.views</field>
+            <field name="model">project.production.task.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Vincular tarea a la línea de producción">
+                    <group>
+                        <field name="task_id"/>
+                    </group>
+                    <footer>
+                        <button name="set_task_id" string="Añadir" type="object" class="oe_highlight"/>
+                        <button string="Cancelar" class="oe_link" special="cancel" />
+                </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

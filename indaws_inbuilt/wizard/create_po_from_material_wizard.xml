@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="wizard_create_purchase_order_views" model="ir.ui.view">
+            <field name="name">wizard.create.purchase.order.views</field>
+            <field name="model">wizard.create.purchase.order</field>
+            <field name="arch" type="xml">
+                <form string="Crear Compra">
+                    <group>
+	                    <group>
+	                    	<field name="partner_id"/>
+	                    </group>
+                    </group>
+                    <field name="line_ids">
+                    	<tree name="Crear Compra" create="false" editable="bottom">
+                    		<field name="project_id" readonly="1" force_save="1"/>
+                    		<field name="task_id" optional="hide" force_save="1"/>
+                    		<field name="product_id" readonly="1" force_save="1"/>
+                    		<field name="material_id" invisible="1" force_save="1"/>
+                    		<field name="quantity" readonly="1" force_save="1"/>
+                    		<field name="cost" readonly="1" force_save="1"/>
+                    		<field name="cost_subtotal" readonly="1" force_save="1"/>
+                    		<field name="partner_id" required="1" options="{'no_create': True}" />
+                    	</tree>
+                    </field>
+                    <footer>
+                        <button name="create_po_from_material" string="Crear pedidos de compra" type="object" class="oe_highlight"/>
+                        <button string="Cancelar" class="oe_link" special="cancel" />
+                </footer>
+                </form>
+            </field>
+        </record>
+
+     <!--    <record id="action_open_create_po_wizard" model="ir.actions.act_window">
+            <field name="name">Crear Compras</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.create.purchase.order</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+ -->
+       
+    </data>
+</odoo>

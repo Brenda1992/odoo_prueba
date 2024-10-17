@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="inherit_purchase_order_view_form" model="ir.ui.view">
+        <field name="name">inherit.purchase.order.views.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+        	<xpath expr="//field[@name='order_line']/tree//field[@name='date_planned']" position="after">
+        		<field name="account_analytic_id" optional="hide" context="{'default_partner_id':parent.partner_id}" domain="['|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
+        		<field name="task_id"/>
+            </xpath>
+
+            <field name="currency_id" position="after">
+                <field name="sale_id"/>
+                <field name="project_id" readonly="False"/>
+            </field>
+
+        </field>
+    </record>
+</odoo>

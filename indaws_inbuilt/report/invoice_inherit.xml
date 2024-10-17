@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_invoice_terms_inherit" inherit_id="account.report_invoice_document">
+            <xpath expr="//div[hasclass('clearfix')]" position="after">
+                <br/>
+                <br/>
+                <p style="font-size:12px;">
+                    Sus datos personales serán usados para nuestra relación y poder prestarle nuestros servicios. Dichos datos son necesarios para poder relacionarnos con usted, lo que nos permite el uso de su información
+                    dentro de la legalidad. Asimismo, podrán tener conocimiento de su información aquellas entidades que necesiten tener acceso a la misma para que podamos prestarle nuestros servicios.
+                    sus datos durante nuestra relación y mientras nos obliguen las leyes aplicables. En cualquier momento puede dirigirse a nosotros para saber qué información tenemos sobre usted, rectificarla si fuese
+                    incorrecta y eliminarla una vez finalizada nuestra relación. También tiene derecho a solicitar el traspaso de su información a otra entidad (portabilidad). Para solicitar alguno de estos derechos, deberá
+                    realizar una solicitud escrita a nuestra dirección, junto con una fotocopia de su DNI: ELECTRICIDAD BEVIA S.L.   , <strong>Martillo nº 10, Nave 1. Polígono Industrial Canastell -San Vicente del\
+                    Raspeig (Alicante) -Alicante -03690</strong> . En caso de que entienda que sus derechos han sido desatendidos, puede formular una reclamación en la Agencia Española de Protección de Datos
+                    (www.agpd.es).
+                </p>
+            </xpath>
+        </template>
+    </data>
+</odoo>

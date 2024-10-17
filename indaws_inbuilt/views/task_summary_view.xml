@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="tree_project_task_summary_view" model="ir.ui.view">
+            <field name="name">tree.project.task.summary.view</field>
+            <field name="model">project.task</field>
+            <field name="arch" type="xml">
+                <tree string="Resumen de tareas" editable="top">
+                    <field name="company_id" invisible="1"/>
+                    <field name="project_id"/>
+                    <field name="name"/>
+                    <field name="date_deadline"/>
+                    <field name="coste_horas"/>
+                    <field name="coste_materiales"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_task_summary" model="ir.actions.act_window">
+            <field name="name">Resumen de tareas</field>
+            <field name="res_model">project.task</field>
+            <field name="view_mode">tree</field>
+            <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'tree', 'view_id': ref('tree_project_task_summary_view')})]" />
+        </record>
+
+        <menuitem id="menu_project_task_summary" name="Resumen de tareas" parent="project.menu_project_report" action="action_task_summary" sequence="100"/>
+
+    </data>
+</odoo>

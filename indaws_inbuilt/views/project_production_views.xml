@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+		<record id="indaws_project_production_tree" model="ir.ui.view">
+            <field name="name">indaws.project.production.tree.view</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="project_id"/>
+                    <field name="sale_id" readonly="1"/>
+                    <field name="capitulo_id" readonly="1"/>
+                	<field name="sale_line_id" invisible="1"/>
+                	<field name="name" attrs="{'readonly': [('sale_line_id', '!=', False)]}"/>
+                    <field name="currency_id" invisible="1"/>
+                	<field name="price_subtotal" attrs="{'readonly': [('sale_line_id', '!=', False)]}" sum="Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                	<field name="quantity" attrs="{'readonly': [('sale_line_id', '!=', False)]}"/>
+                	<field name="ptje"/>
+                	<field name="quantity_done"/>
+                	<field name="task_id" invisible="1"/>
+                	<button name="action_set_project_task" string="" icon="fa-tasks btn-secondary" type="object" attrs="{'invisible':[('task_id','!=',False)]}"/>
+                	<button name="action_open_project_task" string="" icon="fa-long-arrow-right btn-secondary" type="object" attrs="{'invisible':[('task_id','=',False)]}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="indaws_project_production_search_view" model="ir.ui.view">
+            <field name="name">project.production.search.view</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <search string="Search production">
+                    <field name="project_id"/>
+                    <field name="sale_id"/>
+                    <field name="name"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Proyecto" name="group_by_project_id" domain="[]" context="{'group_by':'project_id'}"/>
+                        <filter string="Pedido" name="group_by_sale_id" domain="[]" context="{'group_by':'sale_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_project_production" model="ir.actions.act_window">
+            <field name="name">Project Production</field>
+            <field name="res_model">project.production</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+        <menuitem id="menu_project_production"
+                  name="Producción"
+                  parent="project.menu_main_pm"
+                  action="indaws_inbuilt.action_project_production"
+                  sequence="8"
+                  />
+
+        <!-- report-->
+        <record id="indaws_project_production_tree_view_report" model="ir.ui.view">
+            <field name="name">indaws.project.production.tree.view.report</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <tree create="0" delete="0" edit="0">
+                    <field name="project_id" optional="show"/>
+                    <field name="capitulo_id" optional="show"/>
+                	<field name="sale_line_id" invisible="1" optional="show"/>
+                	<field name="uom_id" optional="show"/>
+                	<field name="product_id" optional="show"/>
+                	<field name="name" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+
+                    <field name="quantity" options="{'bg_color': 'yellow'}" optional="show"/>
+                	<field name="price_unit"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'yellow'}" optional="show"/>
+                	<field name="price_subtotal"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'yellow'}" optional="show"/>
+
+                    <field name="quantity_certified" options="{'bg_color': 'orange'}" optional="show"/>
+                	<field name="price_unit_certified"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'orange'}" optional="show"/>
+                	<field name="price_subtotal_certified"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'orange'}" optional="show"/>
+
+                    <field name="quantity_cost" options="{'bg_color': 'cyan'}" optional="show"/>
+                	<field name="cost_unit"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'cyan'}" optional="show"/>
+                	<field name="cost_subtotal"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'cyan'}" optional="show"/>
+
+
+                	<field name="quantity_done" options="{'bg_color': 'pink'}" optional="show"/>
+                	<field name="cost_unit_done" sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'pink'}" optional="show"/>
+                    <field name="cost_subtotal_done"  sum="Total" widget="monetary" options="{'currency_field': 'currency_id', 'bg_color': 'pink'}" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="indaws_project_production_pivot_view_report" model="ir.ui.view">
+            <field name="name">project.production.pivot</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <pivot>
+                    <field name="project_id" type="row"/>
+                    <field name="capitulo_id" type="row"/>
+                	<field name="product_id" type="row"/>
+
+                    <field name="quantity" type="measure"/>
+                	<field name="price_unit" type="measure"/>
+                	<field name="price_subtotal" type="measure"/>
+
+                    <field name="quantity_certified" type="measure"/>
+                	<field name="price_unit_certified" type="measure"/>
+                	<field name="price_subtotal_certified" type="measure"/>
+
+                    <field name="quantity_cost" type="measure"/>
+                	<field name="cost_unit" type="measure"/>
+                	<field name="cost_subtotal" type="measure"/>
+
+                	<field name="quantity_done" type="measure"/>
+                	<field name="cost_unit_done" type="measure"/>
+                    <field name="cost_subtotal_done" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="indaws_project_production_search_view_report" model="ir.ui.view">
+            <field name="name">project.production.search.view</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <search string="Search production">
+                    <field name="project_id"/>
+                    <field name="capitulo_id"/>
+                    <field name="product_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Obra" name="group_by_project_id" domain="[]" context="{'group_by':'project_id'}"/>
+                        <filter string="Capitulo" name="group_by_capitulo_id" domain="[]" context="{'group_by':'capitulo_id'}"/>
+                        <filter string="Partida" name="group_by_capitulo_id" domain="[]" context="{'group_by':'product_id'}"/>
+                    </group>
+                    <searchpanel>
+                        <field name="project_id" string="OBRA" icon="fa-bars" enable_counters="1"/>
+                        <field name="capitulo_id" select="multi" domain="[('project_id', '=', project_id)]" string="CAPITULO" icon="fa-bars" enable_counters="1"/>
+                </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_project_production_view_report" model="ir.actions.act_window">
+            <field name="name">Control Coste</field>
+            <field name="res_model">project.production</field>
+            <field name="view_mode">tree,pivot</field>
+            <field name="domain">[('sale_line_id', '!=', False),('project_id.show_in_report','=',True)]</field>
+            <field name="search_view_id" ref="indaws_project_production_search_view_report"/>
+            <field name="view_id" ref="indaws_project_production_tree_view_report" />
+            <field
+            name="view_ids"
+            eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('indaws_project_production_tree_view_report')})]"
+        />
+        </record>
+
+        <record id="indaws_project_production_search_view_report_only_one" model="ir.ui.view">
+            <field name="name">project.production.search.view.only</field>
+            <field name="model">project.production</field>
+            <field name="arch" type="xml">
+                <search string="Search production">
+                    <field name="capitulo_id"/>
+                    <field name="product_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Capitulo" name="group_by_capitulo_id" domain="[]" context="{'group_by':'capitulo_id'}"/>
+                        <filter string="Partida" name="group_by_capitulo_id" domain="[]" context="{'group_by':'product_id'}"/>
+                    </group>
+                    <searchpanel>
+                        <field name="capitulo_id" select="multi" string="CAPITULO" icon="fa-bars" enable_counters="1"/>
+                </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_project_production_view_report_only_one" model="ir.actions.act_window">
+            <field name="name">Control Coste</field>
+            <field name="res_model">project.production</field>
+            <field name="view_mode">tree,pivot</field>
+            <field name="domain">[('sale_line_id', '!=', False)]</field>
+            <field name="search_view_id" ref="indaws_project_production_search_view_report_only_one"/>
+            <field name="view_id" ref="indaws_project_production_tree_view_report" />
+            <field
+            name="view_ids"
+            eval="[(5,0,0),
+                          (0,0,{'view_mode':'tree', 'view_id': ref('indaws_project_production_tree_view_report')})]"
+        />
+        </record>
+
+
+        <menuitem id="menu_project_production_cost_report"
+                  name="Control Coste"
+                  parent="project.menu_project_report"
+                  action="indaws_inbuilt.action_project_production_view_report"
+                  sequence="8"
+                  />
+
+
+    </data>
+</odoo>

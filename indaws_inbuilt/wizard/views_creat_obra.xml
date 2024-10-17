@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="wizard_create_sale_obra_views" model="ir.ui.view">
+            <field name="name">wizard.create.sale.obra.views</field>
+            <field name="model">wizard.create.obra</field>
+            <field name="arch" type="xml">
+                <form string="Crear Obra">
+                    <p>
+                        No ha seleccionado ninguna obra en el presupuesto y por tanto se creará una nueva.
+                        ¿Quiere continuar con la creación de la obra?
+                    </p>
+                    <footer>
+                        <button name="cancel_project_create" string="Confirmar" type="object" class="oe_highlight"/>
+                        <button string="Cancelar" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_wizard_create_sale_obra" model="ir.actions.act_window">
+            <field name="name">Crear Obra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.create.obra</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

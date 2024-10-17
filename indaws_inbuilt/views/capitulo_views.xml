@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="views_capitulo_sale_tree" model="ir.ui.view">
+            <field name="name">views.capitulo.sale.tree</field>
+            <field name="model">sale.caputilo</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='customer_signature']" position="after">
+                <page name="capitulos" string="CAPITULOS">
+                    <tree editable="bottom">
+                        <field name="code"/>
+                    </tree>
+                </page>
+            </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

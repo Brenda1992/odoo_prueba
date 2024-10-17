@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!--Multicompany rules-->
+        <record model="ir.rule" id="sale_capitulo_multi_company">
+            <field name="name">Sale Capitulo</field>
+            <field name="model_id" ref="model_sale_capitulo"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="sale_unidad_obra_multi_company">
+            <field name="name">Sale Unidad Obra</field>
+            <field name="model_id" ref="model_sale_unidad_obra"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="project_task_material_multi_company">
+            <field name="name">Project Task Material</field>
+            <field name="model_id" ref="model_project_task_material"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="project_certification_multi_company">
+            <field name="name">Project Certification</field>
+            <field name="model_id" ref="model_project_certification"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record model="ir.rule" id="project_certification_line_multi_company">
+            <field name="name">Project Certification Line</field>
+            <field name="model_id" ref="model_project_certification_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

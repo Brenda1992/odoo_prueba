@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="product_template_order_form_customs" model="ir.ui.view">
+            <field name="name">product.template.order.form.custom</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='detailed_type']" position="after">
+<!--                    <field name="product_type_calc"/>-->
+                    <field name="product_type_unit"/>
+                    <field name="price_type"/>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                	<page name="unidades_ids" string="Uds de obra ">
+                        <field name="unidades_ids">
+                            <tree editable="bottom">
+<!--                                <field name="product_id" domain="[('product_type_calc','!=',False)]" />-->
+                                <field name="product_id" domain="[('product_type_unit','!=',False)]" />
+                                <field name="product_type_calc" readonly="1" />
+                                <field name="comment" optional="hidden" />
+                                <field name="quantity" />
+                                <field name="uom_id" optional="hidden" />
+                                <field name="cost_unit" />
+                                <field name="incremento" string="% incremento" readonly="False" force_save="1" />
+                                <field name="price_unit" />
+                                <field name="price_subtotal" />
+                                <field name="cost_subtotal" />
+                            </tree>
+                        </field>
+                        <group>
+                            <field name="computed_cost" />
+                            <field name="computed_sale_price" />
+                            <field name="computed_margin" />
+                            <field name="show_update_btn" invisible="1" />
+                            <button name="action_update_price" type="object" string="Actualizar precio" class="btn btn-primary" attrs="{'invisible': [('show_update_btn', '=', False)]}" />
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+         <record id="product_template_order_form_customs_edit" model="ir.ui.view">
+            <field name="name">product.template.order.form.custom</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='detailed_type']" position="after">
+                    <field name="product_type_unit"/>
+                    <field name="price_type"/>
+                </xpath>
+
+                <xpath expr="//group[@name='group_lots_and_weight']" position="inside">
+                    <label for="ubicanion"/>
+                    <div>
+                        <field name="ubicanion"/>
+                    </div>
+                </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <page name="unidades_ids" string="Uds de obra ">
+                        <field name="unidades_ids">
+                            <tree editable="bottom">
+<!--                                <field name="product_id" domain="[('product_type_calc','!=',False)]" />-->
+                                <field name="product_id" domain="[('product_type_unit','!=',False)]" />
+                                <field name="product_type_calc" readonly="1" />
+                                <field name="comment" optional="hidden" />
+                                <field name="quantity" />
+                                <field name="uom_id" optional="hidden" />
+                                <field name="cost_unit" />
+                                <field name="incremento" string="% incremento" readonly="False" force_save="1" />
+                                <field name="price_unit" />
+                                <field name="price_subtotal" />
+                                <field name="cost_subtotal" />
+                            </tree>
+                        </field>
+                        <group>
+                            <field name="computed_cost" />
+                            <field name="computed_sale_price" />
+                            <field name="computed_margin" />
+                            <field name="show_update_btn" invisible="1" />
+                            <button name="action_update_price" type="object" string="Actualizar precio" class="btn btn-primary" attrs="{'invisible': [('show_update_btn', '=', False)]}" />
+                        </group>
+                    </page>
+                </xpath>
+
+                <field name="barcode" position="after">
+                    <field name="overtime"/>
+                </field>
+
+            </field>
+        </record>
+
+        <record id="product_template_tree_view_inherit" model="ir.ui.view">
+            <field name="name">product.template.tree.view.inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='detailed_type']" position="after">
+                    <field name="product_type_unit"/>
+                    <field name="price_type"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

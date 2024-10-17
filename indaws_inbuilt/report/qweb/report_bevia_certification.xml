@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_bevia_certification" model="ir.actions.report">
+            <field name="name">Certificación</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="model">project.certification</field>
+            <field name="report_name">indaws_inbuilt.report_bevia_certificate</field>
+            <field name="report_file">indaws_inbuilt.report_bevia_certificate</field>
+            <field name="binding_model_id" ref="model_project_certification"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

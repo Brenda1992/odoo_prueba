@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+
+        <record id="indaws_project_certification_line_search_view" model="ir.ui.view">
+            <field name="name">Lineas certificacion</field>
+            <field name="model">project.certification.line</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="capitulo_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Capitulo" name="group_by_capitulo_id" domain="[]" context="{'group_by':'capitulo_id'}"/>
+                    </group>
+                    <searchpanel>
+                        <field name="capitulo_id" select="multi" string="CAPITULO" icon="fa-bars" enable_counters="1"/>
+                </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_project_certification_line" model="ir.actions.act_window">
+            <field name="name">Lineas certificacion</field>
+            <field name="res_model">project.certification.line</field>
+            <field name="search_view_id" ref="indaws_project_certification_line_search_view"/>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <record id="tree_project_certification_views" model="ir.ui.view">
+            <field name="name">tree.project.certification.views</field>
+            <field name="model">project.certification</field>
+            <field name="arch" type="xml">
+                <tree string="Project Certification">
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    <field name="project_id"/>
+                    <field name="date"/>
+                    <field name="date_signed"/>
+                    <field name="ptje_retencion"/>
+                    <field name="comment"/>
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="form_project_certification_views" model="ir.ui.view">
+            <field name="name">form.project.certification.views</field>
+            <field name="model">project.certification</field>
+            <field name="arch" type="xml">
+                <form string="Project Certification">
+                    <header>
+                        <field name="state" widget="statusbar"/>
+                        <button name="action_send_email" class="btn btn-primary" string="Send by email" type="object"/>
+                        <button name="add_lines" string="Añadir líneas" type="object" class="oe_highlight" attrs="{'invisible':[('state','=','invoiced')]}"/>
+                        <button name="create_invoice" string="Crear factura" type="object" class="oe_highlight" attrs="{'invisible': [('state','=','invoiced')]}"/>
+                        <button string="Lineas certificación" name="action_view_certification_line" type="object" icon="fa-table"></button>
+                    </header>
+                    <sheet string="Project Certifiaction">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_invoices" type="object" class="oe_stat_button"
+                                    icon="fa-pencil-square-o"
+                                    attrs="{'invisible': [('invoice_count_certification', '=', 0)]}">
+                                <field name="invoice_count_certification" widget="statinfo" string="Invoices"/>
+                            </button>
+                            <button name="action_view_sale_order" type="object" class="oe_stat_button"
+                                    icon="fa-pencil-square-o"
+                                    attrs="{'invisible': [('sale_order_count_certification', '=', 0)]}">
+                                <field name="sale_order_count_certification" widget="statinfo" string="Presupuestos"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="name" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="project_id" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="partner_id"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="date" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="date_signed" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="comment" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="ultima_certificacion" widget="boolean_toggle" attrs="{'readonly': [('state', '=', 'invoiced')]}"/>
+                                <field name="forma_pago" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="certified_before" widget="monetary"/>
+                                <field name="certified_before_ptje" widget="percentage"/>
+                                <field name="importe_presupuestado" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="importe_certificado"  widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="importe_certificado_percentage" widget="percentage"/>
+                                <field name="importe_certificado_actual" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="importe_certificado_actual_percentage" widget="percentage"/>
+                                <field name="ptje_retencion"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="line_ids" string="Lineas">
+                                <field name="line_ids" attrs="{'readonly': [('state', '=', 'invoiced')]}">
+                                    <tree string="Lineas" editable="bottom" create="0" delete="0" decoration-danger="red_line">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="sale_order" optional="show"/>
+                                        <field name="capitulo_id" optional="show"/>
+                                        <field name="currency_id" invisible="1" optional="show"/>
+                                        <field name="name" optional="show"/>
+                                        <field name="price_subtotal" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                                        <field name="quantity" force_save="1" optional="show"/>
+                                        <field name="ptje" optional="show"/>
+                                        <field name="quantity_certified" optional="show"/>
+                                        <field name="certified" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                                        <field name="certified_before" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                                        <field name="certified_before_ptje" optional="show"/>
+                                        <field name="quantity_certified_before" optional="show"/>
+
+                                        <field name="current_certified" widget="monetary" options="{'currency_field': 'currency_id'}" optional="hide"/>
+                                        <field name="current_certified_ptje" optional="hide"/>
+                                        <field name="quantity_current_certified" optional="hide"/>
+
+                                        <field name="project_production_line_id" optional="hide"/>
+                                        <field name="sale_line_id" optional="hide"/>
+                                        <field name="red_line" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="capitulo_line_ids" string="Capitulos">
+                                <field name="capitulo_line_ids">
+                                    <tree string="Capitulos" edit="0" create="0" delete="0">
+                                        <field name="capitulo_id"/>
+                                        <field name="price_subtotal"/>
+                                        <field name="certified"/>
+                                        <field name="before_certified"/>
+                                        <field name="current_certified"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_project_certification" model="ir.actions.act_window">
+            <field name="name">Project Certificaciones</field>
+            <field name="res_model">project.certification</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <menuitem id="menu_project_certification"
+                  name="Certificaciones"
+                  parent="project.menu_main_pm"
+                  action="indaws_inbuilt.action_project_certification"
+                  sequence="10"/>
+
+
+        <record id="tree_project_certification_line_views" model="ir.ui.view">
+            <field name="name">tree.project.certification.line.views</field>
+            <field name="model">project.certification.line</field>
+            <field name="arch" type="xml">
+                <tree string="Lineas" editable="top" create="0" decoration-danger="red_line" default_order="sequence, id">
+                    <field name="sequence" widget="handle" />
+                    <field name="sale_order" optional="show"/>
+                    <field name="capitulo_id" optional="show"/>
+                    <field name="currency_id" invisible="1" optional="show"/>
+                    <field name="name" optional="show"/>
+                    <field name="price_subtotal" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="quantity" force_save="1" optional="show"/>
+                    <field name="ptje" optional="show"/>
+                    <field name="quantity_certified"  optional="show"/>
+                    <field name="certified" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="certified_before" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="certified_before_ptje" optional="show"/>
+                    <field name="current_certified" optional="show"/>
+                    <field name="quantity_current_certified" widget="monetary" options="{'currency_field': 'currency_id'}" optional="show"/>
+                    <field name="current_certified_ptje"  optional="show"/>
+                    <field name="quantity_certified_before"  optional="show"/>
+                    <field name="project_production_line_id" optional="hide"/>
+                    <field name="sale_line_id" optional="hide"/>
+                    <field name="red_line" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

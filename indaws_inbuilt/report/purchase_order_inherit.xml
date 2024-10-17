@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_purchase_order_terms_inherit" inherit_id="purchase.report_purchaseorder_document">
+            <xpath expr="//div[@id='total']" position='after'>
+                <p style="font-size:12px;">
+                    Con el fin de asegurar la adecuación de los requisitos para la prestación de nuestros servicios marcados por las directrices de nuestro Sistema de Calidad<br/>
+                    según norma UNE EN ISO 9001:2015, le informamos de que a la recepción de los pedidos se valorarán los siguientes aspectos:<br/>
+                    <ul>
+                        <li> Coincidencia de las cantidades con el albarán y el pedido.</li>
+                        <li>Coincidencia del tipo de material con el pedido.</li>
+                        <li>Marcado CE de los productos recibidos.</li>
+                        <li>Estado físico de los productos recibidos.</li>
+                    </ul><br/>
+                    Electricidad Beviá realiza una evaluación continua de sus proveedores y dicha evaluación se revisa anualmente. En caso de producirse cuatro incidencias en la<br/>
+                    prestación del servicio, se revisará su homologación como proveedor de nuestra empresa.<br/>
+                    Agradecemos su colaboración para proporcionar un servicio óptimo a nuestros clientes.
+                </p>
+            </xpath>
+        </template>
+    </data>
+</odoo>

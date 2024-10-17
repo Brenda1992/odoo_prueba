@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="tree_project_task_material_views" model="ir.ui.view">
+            <field name="name">tree.project.task.material.views</field>
+            <field name="model">project.task.material</field>
+            <field name="arch" type="xml">
+                <tree string="Materials" editable="top">
+                    <field name="picking_id" readonly="1" optional="show" force_save="1"/>
+                    <field name="origin_id" readonly="1" string="Documento origen"/>
+                    <field name="origin_line_id" readonly="1" string="Linea Documento origen"/>
+                    <field name="product_qty_purchase" optional="show"/>
+                    <field name="qty_received" optional="show"/>
+                    <field name="date_planned" optional="show"/>
+                    <field name="location_id" invisible="1"/>
+                    <field name="location_dest_id" invisible="1"/>
+                    <field name="product_uom_id" invisible="1"/>
+                    <field name="project_id" force_save="1" readonly="1" optional="show"/>
+                    <field name="sale_unidad_obra_id" optional="hide" />
+                    <field name="sale_id" optional="hide" />
+                    <field name="task_id" optional="show" domain="[('project_id', '=', project_id)]" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="product_id" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="qty_available" readonly="0" optional="hide" />
+                    <field name="comment" optional="show" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="quantity" optional="show" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="price_unit" invisible="1"/>
+                    <field name="total_price" invisible="1"/>
+                    <field name="cost" optional="show" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="cost_subtotal" optional="show" sum="Cost Subtotal" attrs="{'readonly': [('analytic_move_id', '!=', False)]}"/>
+                    <field name="picking_state" optional="show"/>
+                    <field name="analytic_move_id" invisible="1"/>
+                    <button icon="fa-truck" name="change_the_sent_value" string="" type="object" attrs="{'invisible':['|',('picking_id','!=', False),('origin_id','!=', False)]}"/>
+                    <button name="show_pickings" string="Albaranes" type="object" attrs="{'invisible':[('picking_id','=', False)]}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_project_task_material" model="ir.actions.act_window">
+            <field name="name">Materials</field>
+            <field name="res_model">project.task.material</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_project_task_material"
+          name="Materiales"
+          parent="project.menu_main_pm"
+          action="indaws_inbuilt.action_project_task_material"
+          sequence="9"/>
+
+        <record id="action_wizard_create_purchase_order" model="ir.actions.server">
+            <field name="name">Crear Compra</field>
+            <field name="model_id" ref="model_project_task_material" />
+            <field name="binding_model_id" ref="indaws_inbuilt.model_project_task_material" />
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                if records:
+                    action = records.action_open_create_compra_wizard()
+            </field>
+        </record>
+
+    </data>
+</odoo>

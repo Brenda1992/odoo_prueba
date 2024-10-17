@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="presupuesto_certificaciones_sin_mediciones">
+            <table class="table table-sm o_main_table table-borderless">
+                <thead>
+
+                    <tr style="border-bottom: 2px solid black;">
+                        <th name="th_cod" class="text-left" rowspan="2" style="vertical-align: middle;">Código</th>
+                        <th name="th_resumen" colspan="3" class="text-left" rowspan="2" style="text-align: left; vertical-align: middle;">Resumen</th>
+                        <th name="th_origin" class="text-right" colspan="2" style="border:1px solid black">Origen</th>
+                        <th name="th_previous" class="text-right" colspan="2" style="border:1px solid black">Anteriores</th>
+                        <th name="th_current" class="text-right" colspan="2" style="border:1px solid black">Actual</th>
+                    </tr>
+                    <tr style="border-bottom: 2px solid black;">
+                        <th class="text-right" style="border: 1px solid black;">Cant</th>
+                        <th class="text-right" style="border: 1px solid black;">Imp</th>
+                        <th class="text-right" style="border: 1px solid black;">Cant</th>
+                        <th class="text-right" style="border: 1px solid black;">Imp</th>
+                        <th class="text-right" style="border: 1px solid black;">Cant</th>
+                        <th class="text-right" style="border: 1px solid black;">Imp</th>
+                    </tr>
+                </thead>
+                <tbody class="sale_tbody">
+                    <t t-if="doc.line_ids">
+                        <t t-set="capitulo" t-value="[]"/>
+                        <t t-set="total_capitulo_certified" t-value="0"/>
+                        <t t-set="total_capitulo_certified_before" t-value="0"/>
+                        <t t-set="total_capitulo_current_certified" t-value="0"/>
+                        <t t-set="total_general_certified" t-value="0"/>
+                        <t t-set="total_general_certified_before" t-value="0"/>
+                        <t t-set="total_general_current_certified" t-value="0"/>
+                        <t t-foreach="doc.line_ids" t-as="line">
+                            <!-- Show chapter header if new -->
+                            <t t-if="line.capitulo_id.id not in capitulo">
+                                <!-- If it is not the first chapter, show the total of the previous chapter -->
+                                <t t-if="capitulo">
+                                    <tr>
+                                        <td/>
+                                        <td colspan="3" class="text-center">
+                                            <span>TOTAL &#160;</span>
+                                            <span t-esc="doc.line_ids.filtered(lambda l: l.capitulo_id.id == capitulo[-1])[0].capitulo_id.name"/> &#160;&#160;&#160;&#160;
+
+                                        </td>
+                                        <td style="border-top: 2px solid black;"/>
+                                        <td class="text-center" style="border-top: 2px solid black;">
+                                            <span t-esc="'%.2f' % total_capitulo_certified"/>
+                                        </td>
+                                        <td style="border-top: 2px solid black;"/>
+                                        <td class="text-center" style="border-top: 2px solid black;">
+                                            <span t-esc="'%.2f' % total_capitulo_certified_before"/>
+                                        </td>
+                                        <td style="border-top: 2px solid black;"/>
+                                        <td class="text-center" style="border-top: 2px solid black;">
+                                            <span t-esc="'%.2f' % total_capitulo_current_certified"/>
+                                        </td>
+                                    </tr>
+                                    <!-- Sum the accumulated total of the chapter to the general total -->
+                                    <t t-set="total_general_certified" t-value="total_general_certified + total_capitulo_certified"/>
+                                    <t t-set="total_general_certified_before" t-value="total_general_certified_before + total_capitulo_certified_before"/>
+                                    <t t-set="total_general_current_certified" t-value="total_general_current_certified + total_capitulo_current_certified"/>
+                                    <!-- Reset the sums for the new chapter -->
+                                    <t t-set="total_capitulo_certified" t-value="0"/>
+                                    <t t-set="total_capitulo_certified_before" t-value="0"/>
+                                    <t t-set="total_capitulo_current_certified" t-value="0"/>
+                                </t>
+                                <!-- Header of the new chapter -->
+                                <tr>
+                                    <td colspan="1" t-att-style="'background-color: %s;' % doc.company_id.primary_color">
+                                        <span t-esc="line.capitulo_id.code"/>
+                                    </td>
+                                    <td colspan="11" t-att-style="'background-color: %s;' % doc.company_id.primary_color">
+                                        <span style="font-size: 16px; color:black;font-weight: bold;" t-esc="line.capitulo_id.name"/>
+                                    </td>
+                                </tr>
+                                <!-- Add chapter to list -->
+                                <t t-set="capitulo" t-value="capitulo + [line.capitulo_id.id]"/>
+                            </t>
+                            <!-- Print the lines of each chapter -->
+                            <tr style="font-size:14px;">
+                                <td><span t-esc="line.sale_line_id.code"/></td>
+                                <td colspan="3">
+                                    <span t-esc="line.name" style="font-size:10pt;"/>
+                                </td>
+                                <!-- Origin quantities and amounts -->
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % line.quantity_certified" class="text-right"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % line.certified"/>
+                                </td>
+                                <!-- Previous quantities and amounts -->
+                                <td cclass="text-center">
+                                    <span t-esc="'%.2f' % line.quantity_certified_before" class="text-right"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % line.certified_before"/>
+                                </td>
+                                <!-- Current quantities and amounts -->
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % line.quantity_current_certified" class="text-right"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="'%.2f' % line.current_certified"/>
+                                </td>
+                            </tr>
+
+                            <!-- Accumulate the values of the current line in the chapter total variables -->
+                            <t t-set="total_capitulo_certified" t-value="total_capitulo_certified + line.certified"/>
+                            <t t-set="total_capitulo_certified_before" t-value="total_capitulo_certified_before + line.certified_before"/>
+                            <t t-set="total_capitulo_current_certified" t-value="total_capitulo_current_certified + line.current_certified"/>
+                        </t>
+
+                        <!-- Show the total of the last chapter -->
+                        <tr>
+                            <td/>
+                            <td colspan="3" class="text-center">
+                                <span>TOTAL &#160;</span>
+                                <span t-esc="doc.line_ids.filtered(lambda l: l.capitulo_id.id == capitulo[-1])[0].capitulo_id.name"/> &#160;&#160;&#160;&#160;
+                            </td>
+                            <td style="border-top: 2px solid black;"/>
+                            <td class="text-center" style="border-top: 2px solid black;">
+                                <span t-esc="'%.2f' % total_capitulo_certified"/>
+                            </td>
+                            <td class="text-center" style="border-top: 2px solid black;"/>
+                            <td class="text-center" style="border-top: 2px solid black;">
+                                <span t-esc="'%.2f' % total_capitulo_certified_before"/>
+                            </td>
+                            <td style="border-top: 2px solid black;"/>
+                            <td class="text-center" style="border-top: 2px solid black;">
+                                <span t-esc="'%.2f' % total_capitulo_current_certified"/>
+                            </td>
+                        </tr>
+                        <!-- Add the total of the last chapter to the general totals -->
+                        <t t-set="total_general_certified" t-value="total_general_certified + total_capitulo_certified"/>
+                        <t t-set="total_general_certified_before" t-value="total_general_certified_before + total_capitulo_certified_before"/>
+                        <t t-set="total_general_current_certified" t-value="total_general_current_certified + total_capitulo_current_certified"/>
+
+                        <tr>
+                            <td/>
+                            <td colspan="3" style="padding:0">
+                                <span style="font-weight: bold;">TOTAL CAPITULOS&#160;</span>
+                                <span style="font-weight: bold;"/></td>
+                            <td style="border-top: 2px solid black;"/>
+                            <td style="border-top: 2px solid black;padding:0">
+                                <span style="font-weight: bold;" t-esc="total_general_certified" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td style="border-top: 2px solid black;"/>
+                            <td style="border-top: 2px solid black;padding:0">
+                                <span style="font-weight: bold;" t-esc="total_general_certified_before" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                            <td style="border-top: 2px solid black;"/>
+                            <td style="border-top: 2px solid black;padding:0">
+                                <span style="font-weight: bold;" t-esc="total_general_current_certified" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </template>
+
+        <template id="report_certificaciones_sin_mediciones">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="lang" t-value="doc.partner_id.lang"/>
+                        <div class="page">
+                            <h3 class="mt-4">
+                                <span>CERTIFICACIÓN ACTUAL Y A ORIGEN </span>
+<!--                                <span t-field="doc.name"/>-->
+                            </h3>
+                            <h5>
+                                <span t-field="doc.project_id"/>
+                            </h5>
+                            <t t-call="indaws_inbuilt.presupuesto_certificaciones_sin_mediciones"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <record id="without_measurements_report_action" model="ir.actions.report">
+            <field name="name">Certificación Sin Mediciones</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="model">project.certification</field>
+            <field name="report_name">indaws_inbuilt.report_certificaciones_sin_mediciones</field>
+            <field name="report_file">indaws_inbuilt.report_certificaciones_sin_mediciones</field>
+            <field name="binding_model_id" ref="indaws_inbuilt.model_project_certification" />
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

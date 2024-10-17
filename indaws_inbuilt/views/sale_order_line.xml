@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="bevia_sale_order_line" model="ir.ui.view">
+            <field name="name">bevia.sale.order.line</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <tree string="Sales Order Lines" create="false">
+                    <field name="capitulo_id"/>
+                    <field name="code"/>
+                    <field name="product_id"/>
+                    <field name="product_uom_qty" string="Qty"/>
+                    <field name="price_subtotal" sum="Total" widget="monetary"/>
+                    <field name="cost_subtotal" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="subchapter_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_sale_order_line_filter" model="ir.ui.view">
+            <field name="name">view.sale.order.line.filter</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <search string="Search Sale Order Line">
+                    <field name="capitulo_id"/>
+                    <field name="subchapter_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Capitulo" name="group_by_capitulo" domain="[]"
+                                context="{'group_by':'capitulo_id'}"/>
+                        <filter string="Subchapter" name="group_by_subchapter" domain="[]"
+                                context="{'group_by':'subchapter_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="custom_sale_order_form_view" model="ir.ui.view">
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/control/create[@name='add_section_control']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="custom_sale_order_form_views" model="ir.ui.view">
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/control/create[@name='add_note_control']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_bevia_sale_order_line" model="ir.actions.act_window">
+            <field name="name">Partidas</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="indaws_inbuilt.view_sale_order_line_filter"/>
+            <field name="context">{'create':False, 'search_default_group_by_capitulo':True,'search_default_group_by_subchapter':True}</field>
+            <field name="domain">[('order_id','=', active_id)]</field>
+        </record>
+    </data>
+</odoo>

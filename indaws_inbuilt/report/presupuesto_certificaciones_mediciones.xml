@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="table_presupuesto_certificaciones">
+            <table class="table table-sm o_main_table table-borderless">
+                <tbody class="sale_tbody">
+                    <t t-if="doc.line_ids">
+                        <tr style="border-bottom: 2px solid black;">
+                            <th name="th_cod" class="text-left">Código</th>
+                            <th name="th_resumen" colspan="3" class="text-left" style="text-align: left;">Resumen</th>
+                            <th name="th_uds" class="text-right">Uds</th>
+                            <th name="th_longitud" class="text-right">Longitud</th>
+                            <th name="th_anchura" class="text-right">Anchura</th>
+                            <th name="th_altura" class="text-right">Altura</th>
+                            <th name="th_parciales" class="text-right">Parciales</th>
+                            <th name="th_qty" class="text-right">Cantidad</th>
+                            <th name="th_price" class="text-right">Precio</th>
+                            <th name="th_importe" class="text-right">Importe</th>
+                        </tr>
+                        <t t-set="capitulo" t-value="[]"/>
+                        <t t-set="total_capitulo_certified" t-value="0"/>
+                        <t t-set="total_general" t-value="0"/>
+                        <t t-foreach="doc.line_ids" t-as="line">
+                            <!-- Show chapter header if new -->
+                            <t t-if="line.capitulo_id.id not in capitulo">
+                                <!-- Show the total of the previous chapter if it is not the first -->
+                                <t t-if="capitulo">
+                                    <tr style="font-size:15px; text-align: right !important;">
+                                        <td colspan="11">
+                                            <span>TOTAL &#160;</span>
+                                            <span t-esc="doc.line_ids.filtered(lambda l: l.capitulo_id.id == capitulo[-1])[0].capitulo_id.name"/> &#160;&#160;&#160;&#160;
+                                        </td>
+                                        <td>
+                                            <span t-esc="total_capitulo_certified" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <!-- Sum the accumulated total of the chapter to the general total -->
+                                    <t t-set="total_general" t-value="total_general + total_capitulo_certified"/>
+                                    <!-- Reset running total for next chapter -->
+                                    <t t-set="total_capitulo_certified" t-value="0"/>
+                                </t>
+                                <!-- New chapter header -->
+                                <tr>
+                                    <td colspan="1" t-att-style="'background-color: %s;' % doc.company_id.primary_color"/>
+                                    <td colspan="11" t-att-style="'background-color: %s;' % doc.company_id.primary_color">
+                                        <span style="font-size: 16px; color:black;font-weight: bold;" t-esc="line.capitulo_id.name"/>
+                                    </td>
+                                </tr>
+                                <!-- Add the chapter ID to the list of printed chapters -->
+                                <t t-set="capitulo" t-value="capitulo + [line.capitulo_id.id]"/>
+                            </t>
+                            <!-- Print the lines of each chapter, including the code -->
+                            <tr style="font-size:14px;">
+                                <td><span t-esc="line.sale_line_id.code"/></td>
+                                <td colspan="8" class="text-justify;" style="padding-left:0%;padding-right:0%;text-align:justify;">
+                                    <table class="text-justify;" style="padding-left:0%;padding-right:0%;text-align:justify;">
+                                        <td class="text-justify;" style="text-align:justify;padding-left:0%;padding-right:0%">
+                                            <span class="text-justify;" style="text-align:justify;" t-esc="line.sale_line_id.product_uom.name"/>
+                                        </td>
+                                        <td class="text-justify;" style="text-align:justify;padding-left:1%;font-weight: bold;">
+                                            <span class="text-justify;" style="text-align:justify;" t-esc="line.sale_line_id.product_template_id.name"/>
+                                        </td>
+                                        <td colspan="3"/>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> </td>
+                                <td colspan="8" class="text-justify;" style="text-align:justify;">
+                                    <span class="text-justify;" t-esc="line.name" style="text-align:justify;font-size:10pt;"/>
+                                </td>
+                                <td colspan="3"/>
+                            </tr>
+                            <t t-foreach="line.measurement_ids" t-as="measure">
+                                <t t-if="measure.qty_certified &gt; 0">
+                                    <tr style="font-size:10px;">
+                                        <td/>
+                                        <td colspan="3"><span t-esc="measure.description"/></td>
+                                        <td class="text-center"><span t-esc="measure.units"/></td>
+                                        <td class="text-center"><span t-esc="measure.length"/></td>
+                                        <td class="text-center"><span t-esc="measure.width"/></td>
+                                        <td class="text-center"><span t-esc="measure.height"/></td>
+                                        <td class="text-center"><span t-esc="'{:.2f}'.format(measure.partial)"/></td>
+                                        <td colspan="3"/>
+                                    </tr>
+                                </t>
+                            </t>
+                            <tr style="font-size:14px;">
+                                <td colspan="9"/>
+                                <td class="text-center" style="border-top: 2px solid black;"><span t-esc="line.quantity_certified"/></td>
+                                <td class="text-center" style="border-top: 2px solid black;">
+                                    <span t-esc="line.sale_line_id.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                </td>
+                                <td class="text-center" style="border-top: 2px solid black;">
+                                    <span t-esc="line.certified" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                </td>
+                            </tr>
+                            <!-- Accumulate the certified value in the chapter total -->
+                            <t t-set="total_capitulo_certified" t-value="total_capitulo_certified + line.certified"/>
+                        </t>
+                        <!-- Show the total of the last chapter at the end -->
+                        <tr style="font-size:15px; text-align: right !important;">
+                            <td colspan="11">
+                                <span>TOTAL &#160;</span>
+                                <span t-esc="doc.line_ids.filtered(lambda l: l.capitulo_id.id == capitulo[-1])[0].capitulo_id.name"/> &#160;&#160;&#160;&#160;
+                            </td>
+                            <td>
+                                <span t-esc="total_capitulo_certified" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                            </td>
+                        </tr>
+                        <!-- Add the total of the last chapter to the general total -->
+                        <t t-set="total_general" t-value="total_general + total_capitulo_certified"/>
+                        <tr>
+                            <td></td>
+                            <td colspan="10" style="padding:0">
+                                <span style="font-weight: bold;">TOTAL CAPITULOS&#160;</span>
+                                <span style="font-weight: bold;"/></td>
+                            <td style="border-top: 2px solid black;padding:0">
+                                <span style="font-weight: bold;">
+                                    <span t-esc="total_general" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                </span>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </template>
+
+        <template id="report_presupuesto_certificaciones">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="lang" t-value="doc.partner_id.lang"/>
+                        <div class="page">
+                            <h3 class="mt-4">
+                                <span>CERTIFICACIÓN Y MEDICIONES </span>
+<!--                                <span t-field="doc.name"/>-->
+                            </h3>
+                            <h5>
+                                <span t-field="doc.project_id"/>
+                            </h5>
+                            <t t-call="indaws_inbuilt.table_presupuesto_certificaciones"/>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <record id="certification_report_action" model="ir.actions.report">
+            <field name="name">Certificación y Mediciones</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="model">project.certification</field>
+            <field name="report_name">indaws_inbuilt.report_presupuesto_certificaciones</field>
+            <field name="report_file">indaws_inbuilt.report_presupuesto_certificaciones</field>
+            <field name="binding_model_id" ref="indaws_inbuilt.model_project_certification" />
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>

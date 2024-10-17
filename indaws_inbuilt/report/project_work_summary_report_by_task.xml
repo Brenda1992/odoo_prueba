@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="project_work_summary_task_report_action" model="ir.actions.report">
+            <field name="name">RESUMEN DETALLADO - TAREAS</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="model">project.project</field>
+            <field name="report_name">indaws_work_summary_report.report_project_work_summary_task</field>
+            <field name="report_file">indaws_work_summary_report.report_project_work_summary_task</field>
+            <field name="binding_model_id" ref="project.model_project_project" />
+            <field name="binding_type">report</field>
+        </record>
+        <template id="report_project_work_summary_task">
+            <t t-call="web.html_container">
+                <t t-set="company" t-value="res_company" />
+                <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                    <div class="row">
+                        <div class="col-6" style="margin-top:35px; margin-bottom: 35px;">
+                            <h4>
+                                <t t-esc="company.name" />
+                            </h4>
+                        </div>
+                        <div class="col-6" style="margin-top:35px; margin-bottom: 35px;">
+                            <h4><span class="text-center">LISTADO GENERAL DE FICHAS</span></h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="article o_report_layout_standard">
+                    <t t-foreach="docs" t-as="doc">
+                        <div groups="project.group_project_stages" style="margin-bottom: 20px; font-size:1.15rem;">
+                            <span class="text-left">
+                                <t t-esc="doc.stage_id.name" /></span>
+                        </div>
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td class="pl-0"><strong>CLIENTE: </strong><span>
+                                        <t t-esc="doc.partner_id.name" /></span>
+                                </td>
+                                <td class="pr-0"><strong>OBRA: </strong><span>
+                                        <t t-esc="doc.name" /></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pl-0"><strong>A DIA: </strong><span>
+                                        <t t-esc="datetime.datetime.now()" t-options='{"widget": "date"}' /></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </t>
+                    <t t-set="total_coste_material" t-value="0" />
+                    <t t-set="total_venta_material" t-value="0" />
+                    <t t-set="total_coste_po" t-value="0" />
+                    <t t-set="total_venta_po" t-value="0" />
+                    <t t-set="total_coste_timesheet" t-value="0" />
+                    <t t-set="total_venta_timesheet" t-value="0" />
+                    <t t-set="material_ids" t-value="doc.get_project_material_line_task()" />
+                    <t t-if="material_ids">
+                        <h5 class="text-left">Materiales:</h5>
+                        <table class="table table-borderless table-sm w-100" style="width: 100%; margin-bottom: 30px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid black;">
+                                    <th>Tarea</th>
+                                    <th>Articulo</th>
+                                    <th>Cantidad</th>
+                                    <th>Coste ud</th>
+                                    <th>Total Coste</th>
+                                    <th>Venta ud</th>
+                                    <th>Total Venta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="material_ids" t-as="material">
+                                    <td>
+                                        <t t-esc="material.task_id.name" />
+                                    </td>
+                                    <t t-set="product_id" t-value="material.product_id"/>
+                                    <td>
+                                        <t t-esc="product_id.display_name" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="material.quantity" />
+                                        <t t-esc="product_id.uom_id.name" />
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="material.cost" />
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="material.cost_subtotal" />
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="material.price_unit" />
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="material.total_price" />
+                                    </td>
+                                    <t t-set="total_coste_material" t-value="total_coste_material + (material.cost_subtotal)" />
+                                    <t t-set="total_venta_material" t-value="total_venta_material + (material.total_price)" />
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right"><b>
+                                            <t t-esc="round(total_coste_material, 2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/></b></td>
+                                    <td></td>
+                                    <td class="text-right"><b>
+                                            <t t-esc="round(total_venta_material,  2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/></b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                    <t t-set="timesheet_ids" t-value="request.env['account.analytic.line'].search([('project_id', '=', doc.id),('employee_id','!=',False),('indaws_analytic_line','=',False)], order='task_id, date DESC')" />
+                    <t t-if="timesheet_ids">
+                        <h5 class="text-left">Mano Obra:</h5>
+                        <table class="table table-borderless table-sm w-100" style="width: 100%;  margin-bottom: 30px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid black;">
+                                    <th>Tarea</th>
+                                    <th>Fecha</th>
+                                    <th>Empleado</th>
+                                    <th>Hora Extra</th>
+                                    <th>Description</th>
+                                    <th>Cantidad</th>
+                                    <th>Coste ud</th>
+                                    <th>Total Coste</th>
+                                    <th>Venta ud</th>
+                                    <th>Total Venta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="timesheet_ids" t-as="o">
+                                    <t t-set="values" t-value="o.get_timesheet_values()"/>
+                                    <t t-set="coste_ud" t-value="0" />
+                                    <t t-set="venta_ud" t-value="0" />
+                                    <td>
+                                        <t t-esc="o.task_id.name" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.date" t-options='{"widget": "date"}' />
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.employee_id.name" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.extra_hour_id.name" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.name" />
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="values['qty']" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="values['cost_unit']"
+                                           t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="values['cost_subtotal']"
+                                           t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="values['price_unit']"
+                                           t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="values['price_subtotal']"
+                                           t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/>
+                                    </td>
+                                    <t t-set="total_coste_timesheet" t-value="total_coste_timesheet + values['cost_subtotal']" />
+                                    <t t-set="total_venta_timesheet" t-value="total_venta_timesheet + values['price_subtotal']" />
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right"><b>
+                                            <t t-esc="round(total_coste_timesheet, 2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}' /></b></td>
+                                    <td></td>
+                                    <td class="text-right"><b>
+                                            <t t-esc="round(total_venta_timesheet, 2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'/></b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                    <table class="table table-borderless table-sm text-right" style="width: 50%; float: right;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-right">Total Coste</th>
+                                <th class="text-right">Total Venta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Materiales</th>
+                                <td class="text-right">
+                                    <t t-esc="round(total_coste_material, 2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}' />
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="round(total_venta_material, 2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}' />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Mano Obra</th>
+                                <td class="text-right">
+                                    <t t-esc="round(total_coste_timesheet,  2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'  />
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="round(total_venta_timesheet,  2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'  />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <td class="text-right">
+                                    <t t-esc="round(total_coste_material + total_coste_po + total_coste_timesheet,  2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}'  />
+                                </td>
+                                <td class="text-right">
+                                    <t t-esc="round(total_venta_material + total_venta_po + total_venta_timesheet,  2)" t-options='{"widget": "monetary", "display_currency": doc.company_id.currency_id}' />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

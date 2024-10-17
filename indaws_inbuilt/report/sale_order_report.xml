@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="inherit_report_saleorder_document" inherit_id="sale.report_saleorder_document">
+            <xpath expr="//table[hasclass('o_main_table')]" position="replace">
+                <table class="table table-sm o_main_table">
+                    <tbody class="sale_tbody">
+                        <t t-set="capitulo_subtotal" t-value="0"/>
+                        <t t-set="capitulo_qty" t-value="0"/>
+                        <t t-if="doc.sale_capitule_line">
+                            <t t-set="capitulo_qty" t-value="1"/>
+                            <t t-foreach="doc.sale_capitule_line.filtered(lambda c: c.line_ids)" t-as="capitulo_line">
+                                <tr style="background-color: #e9e9e9;">
+<!--                                <tr class="o_subtotal">-->
+                                    <th colspan="7" t-att-style="'color: %s;' % doc.company_id.primary_color">
+                                        <h5>
+                                            <span style="font-size: 20px;font-weight: 600;" t-esc="capitulo_line.name"/>
+                                        </h5>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th name="th_prodcuto" class="text-left">Partida</th>
+                                    <th name="th_prodcuto" class="text-left">Descripción</th>
+                                    <th name="th_catidad" class="text-right">Cantidad</th>
+                                    <th name="th_udm" class="text-right">UdM</th>
+                                    <th name="th_precio_untario" class="text-right">Precio Ud.</th>
+                                    <th name="th_precio_de_venta" class="text-right">Total</th>
+                                </tr>
+                                <t t-foreach="capitulo_line.line_ids" t-as="line">
+                                    <tr style="font-size:14px;">
+                                        <td>
+                                            <span t-esc="line.name"/>
+                                        </td>
+                                        <td>
+<!--                                            <span t-field="line.name"/>-->
+                                            <span t-field="line.long_description"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="line.product_uom_qty"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line.product_id.uom_id.name"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td style="border: none !important;"/>
+                                    <td style="border: none !important;"/>
+                                    <td style="border: none !important;"/>
+                                    <td style="border: none !important;"/>
+                                    <td style="border: none !important;"><span><strong>Subtotal</strong></span></td>
+                                    <td style="border-left: none !important; border-bottom: none !important;">
+                                         <span><t t-esc="sum(list(map(lambda x: (x.price_subtotal),capitulo_line.line_ids)))" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                        <t t-if="doc.order_line.filtered(lambda line: not line.capitulo_id)">
+                            <tr style="background-color: #e9e9e9;" t-if="capitulo_qty != 0">
+                                <th colspan="7" t-att-style="'color: %s;' % doc.company_id.primary_color">
+                                    <h5>
+                                        <span style="font-size: 20px;font-weight: 600;">PARTIDAS SIN CAPITULOS</span>
+                                    </h5>
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <th name="th_prodcuto" class="text-left">Partida</th>
+                                <th name="th_prodcuto" class="text-left">Descripcion</th>
+                                <th name="th_catidad" class="text-right">Cantidad</th>
+                                <th name="th_udm" class="text-right">UdM</th>
+                                <th name="th_precio_untario" class="text-right">Precio Ud.</th>
+                                <th name="th_precio_de_venta" class="text-right">Total</th>
+                            </tr>
+
+                            <t t-foreach="doc.order_line.filtered(lambda line: not line.capitulo_id)" t-as="line">
+                                <tr style="font-size:14px;">
+                                    <td>
+                                        <span t-esc="line.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.long_description"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="line.product_uom_qty"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="line.product_id.uom_id.name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="line.price_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr>
+                                <td style="border: none !important;"/>
+                                <td style="border: none !important;"/>
+                                <td style="border: none !important;"/>
+                                <td style="border: none !important;"/>
+                                <td style="border: none !important;"><span><strong>Subtotal</strong></span></td>
+                                <td style="border-left: none !important;">
+                                    <span>
+                                        <t t-esc="sum(list(map(lambda x: (x.price_subtotal),doc.order_line.filtered(lambda line: not line.capitulo_id))))" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </t>
+
+
+
+                    </tbody>
+                </table>
+            </xpath>
+        </template>
+    </data>
+</odoo>

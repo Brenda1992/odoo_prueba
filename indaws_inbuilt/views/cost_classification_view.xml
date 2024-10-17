@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- form view: vista principal -->
+        <record model="ir.ui.view" id="cost_classification_form_view">
+            <field name="name">cost_classification_form</field>
+            <field name="model">cost.classification</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet string="Clasificación de costes">
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" required="1" placeholder="Name..."/>
+                            </h1>
+                        </div>
+                        <group name="cost_classification">
+                            <field name="account_ids" string="Cuentas contables" widget="many2many_tags"/>
+                            <field name="default_purchase_account"/>
+                            <field name="default_sales_account"/>
+                            <field name="is_part_hours" widget="boolean_toggle"/>
+                            <field name="is_materials" widget="boolean_toggle"/>
+                            <field name="is_subcontract" widget="boolean_toggle"/>
+                            <field name="is_other_costs" widget="boolean_toggle"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--tree view o list view -->
+        <record model="ir.ui.view" id="cost_classification_tree_view">
+            <field name="name">cost_classification_tree</field>
+            <field name="model">cost.classification</field>
+            <field name="arch" type="xml">
+                <tree string="Cost Classification">
+                    <field name="name"/>
+                    <field name="account_ids" optional="show" widget="many2many_tags"/>
+                    <field name="default_purchase_account" optional="show"/>
+                    <field name="default_sales_account" optional="show"/>
+                    <field name="is_part_hours" widget="boolean_toggle" optional="show"/>
+                    <field name="is_materials" widget="boolean_toggle" optional="show"/>
+                    <field name="is_subcontract" widget="boolean_toggle" optional="show"/>
+                    <field name="is_other_costs" widget="boolean_toggle" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- action list -->
+        <record model="ir.actions.act_window" id="action_cost_classification">
+              <field name="name">Clasificación de costes</field>
+              <field name="res_model">cost.classification</field>
+              <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- menu -->
+        <menuitem id="cost_classification_main_menu" name="Clasificación de costes" parent="project.menu_project_config" groups="stock.group_stock_manager" action="action_cost_classification"/>
+
+    </data>
+</odoo>

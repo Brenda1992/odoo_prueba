@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="views_sale_unidad_obra_tree" model="ir.ui.view">
+        <field name="name">views.sale.unidad.obra.tree</field>
+        <field name="model">sale.unidad.obra</field>
+        <field name="arch" type="xml">
+            <tree string="Sale Unidad Obra">
+                <field name="capitulo_id"/>
+                <field name="order_id" invisible="1"/>
+                <field name="order_line_id"/>
+                <field name="product_id"/>
+                <field name="product_type_calc"/>
+                <field name="comment"/>
+                <field name="quantity"/>
+                <field name="uom_id"/>
+                <field name="cost_unit"/>
+                <field name="incremento"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+                <field name="cost_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sale_unidad_obra_filter" model="ir.ui.view">
+        <field name="name">view.sale.unidad.obra.filter</field>
+        <field name="model">sale.unidad.obra</field>
+        <field name="arch" type="xml">
+            <search string="Search Sale Unidad Obra">
+                <field name="capitulo_id"/>
+                <group expand="1" string="Group By">
+                    <filter string="Capitulo" name="group_by_capitulo" domain="[]" context="{'group_by':'capitulo_id'}"/>
+                    <filter string="Line de Pedido" name="group_by_order_line" domain="[]" context="{'group_by':'order_line_id'}"/>
+                </group>
+<!--                <filter string="Mano de Obra" name="mano_de_obra" domain="[('product_type_calc', '=', 'mano_de_obra')]"/>-->
+<!--                <filter string="Materiales" name="materials" domain="[('product_type_calc', '=', 'materials')]"/>-->
+<!--                <filter string="Maquinaria" name="maquinaria" domain="[('product_type_calc', '=', 'maquinaria')]"/>-->
+<!--                <filter string="Gastos generales" name="gastos_generales" domain="[('product_type_calc', '=', 'gastos_generales')]"/>-->
+                <filter string="Mano de Obra" name="mano_de_obra" domain="[('product_type_calc.is_part_hours', '=', True)]"/>
+                <filter string="Materiales" name="materials" domain="[('product_type_calc.is_materials', '=', True)]"/>
+                <filter string="Maquinaria" name="maquinaria" domain="[('product_type_calc.is_subcontract', '=', True)]"/>
+                <filter string="Gastos generales" name="gastos_generales" domain="[('product_type_calc.is_other_costs', '=', True)]"/>
+                <searchpanel>
+                    <field name="capitulo_id" icon="fa-bars" enable_counters="1"/>
+                    <field name="order_line_id" string="PARTIDA" icon="fa-bars" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sale_unidad_obra" model="ir.actions.act_window">
+        <field name="name">Sale Unidad Obra</field>
+        <field name="res_model">sale.unidad.obra</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="indaws_inbuilt.view_sale_unidad_obra_filter"/>
+        <field name="context">{'create':False, 'search_default_group_by_capitulo': True, 'search_default_group_by_order_line': True}</field>
+        <field name="domain">[('order_id','=', active_id)]</field>
+    </record>
+</odoo>

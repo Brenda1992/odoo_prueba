@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_company_form_inherit" model="ir.ui.view">
+        <field name="name">res.company.form.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='favicon']" position="after">
+                <field name="ptje_gastos_indirectos" string="% Costes indirectos"/>
+                <field name="operation_type_id"/>
+                <field name="operation_type_entrada_id"/>
+                <field name="task_creation"/>
+                <field name="task_capitulo_creation"/>
+                <field name="sales_based_purchases" />
+                <field name="operation_purchase_id" />
+            </xpath>
+
+            <xpath expr="//form/sheet/notebook/page" position="after">
+                <page string="Certificaciones">
+                    <group>
+                        <group>
+                            <field name="product_certificaciones_previas_id"/>
+                            <field name="product_retenciones_id"/>
+                            <field name="billing_type"/>
+                            <field name="billing_lines" attrs="{'invisible': [('billing_type', '!=', 'part_billing')], 'required': [('billing_type', '=', 'part_billing')]}" />
+<!--                            <field name="Previous_billings" attrs="{'invisible': [('billing_type', 'not in', ('part_billing', 'origin_billing'))], 'required': [('billing_type', 'in', ('part_billing', 'origin_billing'))]}"/>-->
+                            <field name="previous_billings" attrs="{'invisible': [('billing_type', 'not in', ('part_billing', 'origin_billing'))]}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

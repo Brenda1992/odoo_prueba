@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- form view: vista principal -->
+        <record model="ir.ui.view" id="hr_employee_extra_hourform_view">
+            <field name="name">hr.employee.extra.hour.form</field>
+            <field name="model">hr.employee.extra.hour</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="product_id"/>
+                                <field name="cost"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!--tree view o list view -->
+        <record model="ir.ui.view" id="hr_employee_extra_hour_tree_view">
+            <field name="name">hr.employee.extra.hour.tree</field>
+            <field name="model">hr.employee.extra.hour</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="employee_id"/>
+                    <field name="product_id"/>
+                    <field name="cost"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- action list -->
+        <record model="ir.actions.act_window" id="action_hr_employee_extra_hour">
+              <field name="name">hr.employee.extra.hour.action</field>
+              <field name="res_model">hr.employee.extra.hour</field>
+              <field name="view_mode">tree,form</field>
+        </record>
+        
+
+    </data>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="sale_capitulo_wizard_views" model="ir.ui.view">
+            <field name="name">sale.capitulo.wizard.form.views</field>
+            <field name="model">sale.capitulo.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Crear Capitulos">
+                    <field name="capitulo_ids" required="1">
+                        <tree editable="bottom">
+                            <field name="name" />
+                            <field name="comment" />
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="create_sale_capitulo" string="Crear" type="object" class="oe_highlight" />
+                        <button string="Cancelar" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sale_capitulo_wizard" model="ir.actions.act_window">
+            <field name="name">Crear Capitulos</field>
+            <field name="res_model">sale.capitulo.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

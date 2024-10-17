@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="views_product_unidad_obra_tree" model="ir.ui.view">
+        <field name="name">views.product.unidad.obra.tree</field>
+        <field name="model">product.unidad.obra</field>
+        <field name="arch" type="xml">
+            <tree string="Product Unidad Obra">
+                <field name="product_tmpl_id" invisible="1"/>
+                <field name="product_id"/>
+                <field name="product_type_calc"/>
+                <field name="comment"/>
+                <field name="quantity"/>
+                <field name="uom_id"/>
+                <field name="cost_unit"/>
+                <field name="incremento"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+                <field name="cost_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_product_unidad_obra" model="ir.actions.act_window">
+        <field name="name">Product Unidad Obra</field>
+        <field name="res_model">product.unidad.obra</field>
+        <field name="view_mode">tree</field>
+    </record>
+</odoo>

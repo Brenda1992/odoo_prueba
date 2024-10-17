@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <record id="action_project_global_report" model="ir.actions.server">
+            <field name="name">Global Report</field>
+            <field name="model_id" ref="model_project_project" />
+            <field name="binding_model_id" ref="project.model_project_project" />
+            <field name="binding_view_types">form,list</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = model.action_projects_global_report()
+            </field>
+        </record>
+
+        <record id="project_milestone_all" model="ir.actions.act_window">
+            <field name="name">Milestones</field>
+            <field name="res_model">project.milestone</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'default_project_id': active_id}</field>
+            <field name="domain">[('project_id', '=', active_id)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                No milestones found. Let's create one!
+                </p><p>
+                Track major progress points that must be reached to achieve success.
+                </p>
+            </field>
+        </record>
+
+        <record id="bevia_inherit_edit_project" model="ir.ui.view">
+            <field name="name">bevia.inherit.edit.project</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']/button[@name='project_update_all_action']" position="after">
+
+                    <button class="oe_stat_button" type="action" name="%(project.act_project_project_2_project_task_all)d" icon="fa-tasks">
+                        <field string="Tasks In Progress" name="task_count" widget="statinfo" options="{'label_field': 'label_tasks'}"/>
+                    </button>
+
+                    <button string="" name="get_project_sale_order" type="object" icon="fa-file-o">
+                        <field name="project_sale_order" widget="statinfo" string="Presupuestos"/>
+                    </button>
+
+                    <button string="Certificacions" name="get_project_certification" type="object" icon="fa-certificate" attrs="{'invisible': [('project_certificate', '=', 0)]}">
+                        <field name="project_certificate" invisible="True"/>
+                    </button>
+
+                    <button name="action_open_project_purchase_orders" type="object" class="oe_stat_button" icon="fa-credit-card" attrs="{'invisible': [('purchase_orders_count', '=', 0)]}" groups="purchase.group_purchase_user">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value"><field name="purchase_orders_count" nolabel="1" /></span>
+                            <span class="o_stat_text">Compras</span>
+                        </div>
+                    </button>
+
+                    <button type="object" string="" name="get_project_material" icon="fa-indent">
+                        <field name="project_task_material" widget="statinfo" string="Traspasos"/>
+                    </button>
+
+                    <button string="Control Coste" name="show_cost_report" type="object" icon="fa-table"></button>
+
+                    <button class="oe_stat_button" name="action_show_timesheets_by_employee_invoice_type" type="object" icon="fa-clock-o" attrs="{'invisible': [('allow_timesheets', '=', False)]}" groups="hr_timesheet.group_hr_timesheet_user">
+                        <div class="o_field_widget o_stat_info">
+                            <div class="oe_inline">
+                                <span class="o_stat_value mr-1"><field name="total_timesheet_time" widget="statinfo" nolabel="1" /></span>
+                                <span class="o_stat_value"><field name="timesheet_encode_uom_id" class="o_stat_text" options="{'no_open' : True}" /></span>
+                            </div>
+                            <span class="o_stat_text">Recorded</span>
+                        </div>
+                    </button>
+
+                    <button class="oe_stat_button" name="%(project_milestone_all)d" type="action" icon="fa-check-square-o">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_value"><field name="milestone_count" nolabel="1"/></span>
+                            <span class="o_stat_text">Milestones</span>
+                        </div>
+                    </button>
+
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="shipping_address_id"/>
+                    <field name="currency_id" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//page[@name='description']" position="after">
+                    <page name="resumen_fields" string="Resumen">
+
+                        <group name="amounts">
+                            <group string="Presupuestado">
+                                <field name="amount_sale"/>
+                            </group>
+
+                            <group string="Real">
+                                <field name="amount_invoiced"/>
+                            </group>
+                        </group>
+
+                        <group name="costs">
+                            <group string="Costes Presupuestados">
+                                <field name="forecast_costs_ids" >
+                                    <tree>
+                                        <field optional="show" name="name" string="Tipo"/>
+                                        <field optional="show" name="quantity" string="Cantidad"/>
+                                        <field optional="show" name="coste" string="Coste"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </group>
+
+                            <group string="Costes Reales">
+                                <field name="real_costs_ids" >
+                                    <tree>
+                                        <field optional="show" name="name" string="Tipo"/>
+                                        <field optional="show" name="quantity" string="Cantidad"/>
+                                        <field optional="show" name="coste" string="Coste"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+
+                        <group name="total_cost">
+                            <group>
+                                <field name="cost_forecast"/>
+                            </group>
+
+                            <group>
+                                <field name="cost_real"/>
+                            </group>
+                        </group>
+
+                        <group string="Desviaciones" name="deviations">
+                            <group>
+                                <field name="cost_deviation"/>
+                                <field name="income_deviation"/>
+                            </group>
+
+                            <group/>
+                        </group>
+
+                        <group name="expected_profitability">
+                            <group string="Rentabilidad Prevista">
+                                <field name="expected_direct_margin"/>
+                                <field name="expected_direct_margin_percentage"/>
+                            </group>
+
+                            <group string="Rentabilidad Real">
+                                <field name="direct_margin"/>
+                                <field name="direct_margin_percentage"/>
+                            </group>
+
+                            <group>
+                                <field name="indirect_costs_percentage"/>
+                                <field name="expected_indirect_costs"/>
+                            </group>
+
+                            <group>
+                                <field name="indirect_costs_percentage_real"/>
+                                <field name="indirect_costs_real"/>
+                            </group>
+
+                            <group>
+                                <field name="expected_real_margin"/>
+                                <field name="expected_real_margin_percentage"/>
+                            </group>
+
+                            <group>
+                                <field name="real_margin"/>
+                                <field name="real_margin_percentage"/>
+                            </group>
+
+                        </group>
+
+                    </page>
+                </xpath>
+
+                <field name="tag_ids" position="after">
+            		<field name="avance_estimado"/>
+            	</field>
+
+                <xpath expr="//notebook" position="inside">
+                	<page name="producción" string="Producción">
+                        <field name="project_production_ids">
+                            <tree editable="bottom">
+                                <field name="sale_id" readonly="1"/>
+                                <field name="capitulo_id" readonly="1"/>
+                            	<field name="sale_line_id" invisible="1"/>
+                            	<field name="name" attrs="{'readonly': [('sale_line_id', '!=', False)]}"/>
+                                <field name="price_subtotal" attrs="{'readonly': [('sale_line_id', '!=', False)]}" sum="Total"/>
+                            	<field name="quantity" attrs="{'readonly': [('sale_line_id', '!=', False)]}"/>
+                            	<field name="ptje"/>
+                            	<field name="quantity_done"/>
+                            	<field name="task_id" invisible="1"/>
+                            	<button name="action_set_project_task" string="" icon="fa-tasks btn-secondary" type="object" attrs="{'invisible':[('task_id','!=',False)]}"/>
+                            	<button name="action_open_project_task" string="" icon="fa-long-arrow-right btn-secondary" type="object" attrs="{'invisible':[('task_id','=',False)]}"/>
+                            </tree>
+                        </field>
+                        <button name="add_lines" string="Añadir líneas de pedidos" class="oe_highlight" type="object"/>
+                    </page>
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="show_in_report"/>
+                </xpath>
+
+                <field name="privacy_visibility" position="after">
+                    <field name="is_billable" />
+                    <field name="journal_id" attrs="{'invisible': [('is_billable', '=', False)]}" options="{'no_create': True}"/>
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

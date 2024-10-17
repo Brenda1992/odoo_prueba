@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_bevia_certificate">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="row">
+                                <div class="col-6" style="float:left;">
+                                    <strong>CERTIFICACIÓN No. </strong>
+                                    <strong t-esc="doc.sequence" style="margin-left:13px" />
+                                    <br />
+                                </div>
+                                <div class="col-6" style="float:left;">
+                                    <strong>Fecha:</strong>
+                                    <span t-esc="doc.date.strftime('%d %B %Y')" style="margin-left:13px" />
+                                </div>
+                            </div>
+                            <h5 style="text-align:left;" t-esc="doc.project_id.name"></h5>
+
+                            <t t-foreach="doc.capitulo_line_ids" t-as="capitulo_line_id">
+                                <table class="table table-sm o_main_table">
+                                    <tbody class="sale_tbody">
+                                        <tr style="background-color:#004080;">
+                                            <td name="td_code" colspan="99">
+                                                <span t-field="capitulo_line_id.capitulo_id.name" style="color:white;"/>
+                                            </td>
+                                        </tr>
+                                         <tr>
+                                            <td name="th_code" colspan="2" class="text-left p-0 ">CODIGO</td>
+                                             <td name="th_uds" colspan="1" class="text-center p-0"></td>
+                                            <td name="th_description" colspan="99" class="text-left p-0">DESCRIPCION</td>
+                                        </tr>
+                                        <t t-foreach="doc.get_lines_from_capitulo(capitulo_line_id.capitulo_id.id)" t-as="batch">
+                                            <tr style="background-color:#C0C0C0">
+                                                <td  class="p-0" colspan="2">
+                                                    <span t-field="batch.sale_line_id.product_id.default_code"/>
+                                                </td>
+                                                <td class="p-0 text-center" colspan="1">
+                                                    <span t-field="batch.sale_line_id.product_id.uom_id.name"/>
+                                                </td>
+                                                <td class="p-0" colspan="99">
+                                                    <span t-field="batch.sale_line_id.name" style="font-weight:bold"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                  <td colspan="7"/>
+                                                  <td class="p-0 text-right" colspan="2">Cantidad</td>
+                                                <td class="p-0 text-right" colspan="1" ></td>
+                                                  <td class="p-0 text-right" colspan="2">Precio</td>
+                                                  <td class="p-0 text-right" colspan="2">Importe</td>
+                                              </tr>
+                                            <tr>
+                                                  <td colspan="6"/>
+                                                  <td class="p-0 text-right" colspan="2">Presupuesto</td>
+                                                  <td class="p-0 text-right" colspan="1" ><span t-esc="'%.2f'%batch.quantity" class="text-right"/></td>
+                                                  <td class="p-0 text-right" colspan="1" ></td>
+                                                  <td class="p-0 text-right" colspan="2"><span t-field="batch.price_unit" class="text-right" widget="monetary" options="{'currency_field': 'currency_id'}"/></td>
+                                                  <td class="p-0 text-right" colspan="2"><span t-field="batch.price_subtotal" class="text-right"/></td>
+                                              </tr>
+                                              <tr>
+                                                  <td colspan="6"/>
+                                                  <td class="p-0 text-right" colspan="2">Certificación a origen</td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span t-esc="'%.2f'%batch.quantity_certified" class="text-right"/>
+                                                  </td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span>(</span>
+                                                      <span t-esc="'%.0f'%batch.ptje" class="text-center"/>
+                                                      <span>%)</span>
+                                                  </td>
+                                                  <td colspan="1"/>
+                                                  <td class="p-0 text-right" colspan="2"><span t-field="batch.certified" class="text-right"/></td>
+                                              </tr>
+                                              <tr>
+                                                  <td colspan="6"/>
+                                                  <td class="p-0 text-right" colspan="2" >Certificación anterior</td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span t-esc="'%.2f'%batch.quantity_certified_before" class="text-right"/>
+                                                  </td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span>(</span>
+                                                      <span t-esc="'%.0f'%batch.certified_before_ptje" class="text-center"/>
+                                                      <span>%)</span>
+                                                  </td>
+                                                  <td colspan="1"/>
+                                                  <td class="p-0 text-right" colspan="2"><span t-field="batch.certified_before" class="text-right"/></td>
+                                              </tr>
+                                              <tr>
+                                                  <td colspan="6"/>
+                                                  <td class="p-0 text-right" colspan="2">Certificación actual</td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span t-esc="'%.2f'%batch.quantity_current_certified" class="text-right"/>
+                                                  </td>
+                                                  <td class="p-0 text-right" colspan="1">
+                                                      <span>(</span>
+                                                      <span t-esc="'%.0f'%batch.current_certified_ptje" class="text-center"/>
+                                                      <span>%)</span>
+                                                  </td>
+                                                  <td colspan="1"/>
+                                                  <td class="p-0 text-right" colspan="2"><span t-field="batch.current_certified" class="text-right"/></td>
+                                              </tr>
+                                            </t>
+                                        <tr style="background-color:#C0C0C0;">
+                                              <td class="p-0 text-left" colspan="1">TOTAL</td>
+                                              <td class="p-0 text-left" colspan="6"><span t-field="capitulo_line_id.capitulo_id.name"/></td>
+                                            <td class="p-0 text-right" colspan="3">Presupuesto</td>
+                                              <td class="p-0 text-right" colspan="3"><span t-field="capitulo_line_id.price_subtotal" class="text-right"/></td>
+                                          </tr>
+                                        <tr style="background-color:#C0C0C0;">
+                                              <td class="p-0 text-left" colspan="1"></td>
+                                              <td class="p-0 text-left" colspan="7"></td>
+                                            <td class="p-0 text-right" colspan="2">Cert. Origen</td>
+                                              <td class="p-0 text-right" colspan="3"><span t-field="capitulo_line_id.certified" class="text-right"/></td>
+                                          </tr>
+                                        <tr style="background-color:#C0C0C0;">
+                                              <td class="p-0 text-left" colspan="1"></td>
+                                              <td class="p-0 text-left" colspan="7"></td>
+                                            <td class="p-0 text-right" colspan="2">Cert. Anterior</td>
+                                              <td class="p-0 text-right" colspan="3"><span t-field="capitulo_line_id.before_certified" class="text-right"/></td>
+                                          </tr>
+                                        <tr style="background-color:#C0C0C0;">
+                                              <td class="p-0 text-left" colspan="1"></td>
+                                              <td class="p-0 text-left" colspan="7"></td>
+                                            <td class="p-0 text-right" colspan="2">Cert. Actual</td>
+                                              <td class="p-0 text-right" colspan="3"><span t-field="capitulo_line_id.current_certified" class="text-right"/></td>
+                                          </tr>
+                                        <tr></tr>
+                                        <tr></tr>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                            <table class="table table-sm o_main_table">
+                                <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                                <tbody class="sale_tbody">
+                                    <tr style="background-color:#f5dcf7;">
+                                        <td class="p-0 text-left" colspan="1">TOTAL OBRA</td>
+                                        <td class="p-0 text-left" colspan="6"><span t-field="doc.project_id.name"/></td>
+                                        <td class="p-0 text-right" colspan="2">Presupuesto</td>
+                                        <td class="p-0 text-right" colspan="3"><span t-field="doc.importe_presupuestado" class="text-right"/></td>
+                                    </tr>
+                                    <tr style="background-color:#f5dcf7;">
+                                        <td colspan="7"/>
+                                        <td class="p-0 text-right" colspan="2">Cert. Origen</td>
+                                        <td class="p-0 text-right" colspan="3"><span t-field="doc.importe_certificado" class="text-right"/></td>
+                                    </tr>
+                                    <tr style="background-color:#f5dcf7;">
+                                        <td colspan="7"/>
+                                        <td class="p-0 text-right" colspan="2">Cert. Anterior</td>
+                                        <td class="p-0 text-right" colspan="3"><span t-field="doc.certified_before" class="text-right"/></td>
+                                    </tr>
+                                    <tr style="background-color:#f5dcf7;">
+                                        <td colspan="7"/>
+                                        <td class="p-0 text-right" colspan="2">Cert. Actual</td>
+                                        <td class="p-0 text-right" colspan="3"><span t-field="doc.importe_certificado_actual" class="text-right"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="page-break-before: always;">
+                            <div class="row">
+                                <div class="col-6" style="float:left;">
+                                    <strong>CERTIFICACIÓN No. </strong>
+                                    <strong t-esc="doc.sequence" style="margin-left:13px" />
+                                    <br />
+                                </div>
+                                <div class="col-6" style="float:left;">
+                                    <strong>Fecha:</strong>
+                                    <span t-esc="doc.date.strftime('%d %B %Y')" style="margin-left:13px" />
+                                </div>
+                            </div>
+                            <h5 style="text-align:left;" t-esc="doc.project_id.name"></h5>
+                            <table class="table table-sm o_main_table">
+                                <thead style="background-color:#C0C0C0;">
+                                    <tr>
+                                        <th class="p-0" colspan="2">RESUMEN POR CAPITULOS</th>
+                                        <th class="p-0 text-right">Presupuesto</th>
+                                        <th class="p-0 text-right">Cert. Origen</th>
+                                        <th class="p-0 text-right">Cert. Anterior</th>
+                                        <th class="p-0 text-right">Cert. Actual</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-foreach="doc.capitulo_line_ids" t-as="capitulo_line_id">
+                                        <tr>
+                                            <td class="p-0"></td>
+                                            <td class="p-0"><span t-field="capitulo_line_id.capitulo_id.name"/></td>
+                                            <td class="p-0 text-right"><span t-field="capitulo_line_id.price_subtotal"/></td>
+                                            <td class="p-0 text-right"><span t-field="capitulo_line_id.certified"/></td>
+                                            <td class="p-0 text-right"><span t-field="capitulo_line_id.before_certified"/></td>
+                                            <td class="p-0 text-right"><span t-field="capitulo_line_id.current_certified"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td class="p-0"></td>
+                                        <td class="p-0"></td>
+                                        <td class="p-0 text-right"><strong t-field="doc.importe_presupuestado"/></td>
+                                        <td class="p-0 text-right"><strong t-field="doc.importe_certificado"/></td>
+                                        <td class="p-0 text-right"><strong t-field="doc.certified_before"/></td>
+                                        <td class="p-0 text-right"><strong t-field="doc.importe_certificado_actual"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm o_main_table">
+                                <thead style="background-color:#C0C0C0;">
+                                    <tr>
+                                        <th class="p-0" colspan="99">RESUMEN DE CERTIFICACIÓN </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <tr>
+                                        <td class="p-0 text-right">Certificación total a origen:</td>
+                                        <td class="p-0 text-right"><span t-field="doc.importe_certificado"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-0 text-right">- Certificación anterior:</td>
+                                        <td class="p-0 text-right"><span t-field="doc.certified_before"/></td>
+                                    </tr>
+                                    <tr style="background-color:#C0C0C0;">
+                                        <td class="p-0 text-right"><strong>TOTAL</strong></td>
+                                        <td class="p-0 text-right"><strong t-field="doc.importe_certificado_actual"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br/>
+                            <div class="row">
+                                <div class="col-12">
+                                    <span>En </span><span style="text-transform: capitalize;" t-esc="doc.company_id.city"></span><span>, a </span>
+                                    <span t-esc="doc.date.strftime('%d %B %Y')"></span>
+                                    <br/><br/>
+                                </div>
+                            </div>
+                            <div class="row">
+                               <div class="col-3">
+                                    <strong>La constructora</strong>
+
+                                </div>
+                                <div class="col-3">
+                                    <strong>El cliente</strong>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
