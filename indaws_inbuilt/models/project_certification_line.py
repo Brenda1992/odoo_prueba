@@ -35,7 +35,7 @@ class ProjectCertificationLine(models.Model):
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
     red_line = fields.Boolean('red line', compute='_previous_certified')
 
-
+    """
     @api.onchange('ptje')
     def onchange_ptje(self):
         if self.ptje < 0 or self.ptje > 100:
@@ -49,6 +49,8 @@ class ProjectCertificationLine(models.Model):
                 'certified':certified,
                 'quantity_certified':quantity_certified,
             })
+    """
+            
 
     @api.onchange('certified')
     def onchange_certified(self):
