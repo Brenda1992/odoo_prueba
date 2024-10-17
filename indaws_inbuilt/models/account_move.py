@@ -9,6 +9,7 @@ class AccountMove(models.Model):
     certification_id = fields.Many2one('project.certification', 'Certificación')
     project_id = fields.Many2one('project.project', string='Obra', compute='_compute_project_id', store=True)
 
+    """
     def unlink(self):
         for rec in self:
             certification_id = self.env['project.certification'].search([
@@ -16,6 +17,8 @@ class AccountMove(models.Model):
             if certification_id:
                 certification_id.state = 'draft'
         return super(AccountMove, self).unlink()
+    """
+        
 
     @api.depends('invoice_line_ids', 'invoice_line_ids.analytic_distribution')
     def _compute_project_id(self):
